@@ -5,19 +5,18 @@ package cn.hnu.operator.resp;
  * @DATE: 2023/8/11
  */
 public class Result {
-  String code;
-  String msg;
+  int status;
+//  String msg;
   Object data;
 
-  public Result(String code, String msg, Object data) {
-    this.code = code;
-    this.msg = msg;
+  public Result(int status,  Object data) {
+    this.status = status;
     this.data = data;
   }
   public static Result OK(){
-    return new Result("20001", "success", null);
+    return new Result(20001, null);
   }
   public static Result NOK(){
-    return new Result("50001", "error", null);
+    return new Result(50001, null);
   }
 }

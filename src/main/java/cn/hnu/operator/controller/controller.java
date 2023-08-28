@@ -54,7 +54,7 @@ public class controller {
   @RequestMapping("/pause")
   public Result pause() {
     MyConst.ISRUNNING = false;
-    return new Result("20001","success", container.getProductsString());
+    return new Result(20001, container.getProductsString());
   }
 
   /**
