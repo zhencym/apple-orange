@@ -1,11 +1,12 @@
-package cn.hnu.operator.consumer;
+package cn.hnu.operator.service.consumer;
 
-import cn.hnu.operator.constant.MyConst;
-import cn.hnu.operator.product.SynContainer;
+import cn.hnu.operator.service.constant.MyConst;
+import cn.hnu.operator.service.constant.SynContainer;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 /**
+ * 消费者线程
  * @Author: zhencym
  * @DATE: 2023/8/11
  */

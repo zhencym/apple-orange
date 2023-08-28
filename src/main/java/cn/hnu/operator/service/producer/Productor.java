@@ -1,13 +1,15 @@
-package cn.hnu.operator.producer;
+package cn.hnu.operator.service.producer;
 
-import cn.hnu.operator.constant.MyConst;
-import cn.hnu.operator.product.Apple;
-import cn.hnu.operator.product.Product;
-import cn.hnu.operator.product.SynContainer;
+import cn.hnu.operator.service.constant.MyConst;
+import cn.hnu.operator.service.product.Apple;
+import cn.hnu.operator.service.product.Product;
+import cn.hnu.operator.service.constant.SynContainer;
+
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 /**
+ * 生产者线程
  * @Author: zhencym
  * @DATE: 2023/8/11
  */

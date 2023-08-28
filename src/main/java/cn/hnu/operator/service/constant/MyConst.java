@@ -1,5 +1,9 @@
-package cn.hnu.operator.constant;
+package cn.hnu.operator.service.constant;
 
+import cn.hnu.operator.service.product.Product;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Queue;
 
 /**
@@ -50,8 +54,15 @@ public class MyConst {
 
 
   /**
-   * 实时容器数据
+   * 实时缓冲区(容器)数据,因为消费时，后生产的先消费，因此使用一个双端队列实现
    */
-  public static Queue<Object> cacheData = null;
+  public static Deque<Product> cacheData = new ArrayDeque<>();
+
+  /**
+   * 目前已经被消费的产品数据，使用一个队列进行记录
+   */
+  public static Queue<Product> consumedData = new ArrayDeque<>();
+
+
 
 }

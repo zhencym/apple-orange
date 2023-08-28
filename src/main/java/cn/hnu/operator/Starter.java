@@ -1,9 +1,9 @@
 package cn.hnu.operator;
 
-import cn.hnu.operator.constant.MyConst;
-import cn.hnu.operator.consumer.Consumer;
-import cn.hnu.operator.product.SynContainer;
-import cn.hnu.operator.producer.Productor;
+import cn.hnu.operator.service.constant.MyConst;
+import cn.hnu.operator.service.consumer.Consumer;
+import cn.hnu.operator.service.constant.SynContainer;
+import cn.hnu.operator.service.producer.Productor;
 import java.util.concurrent.CountDownLatch;
 
 /**

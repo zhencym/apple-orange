@@ -1,4 +1,4 @@
-package cn.hnu.operator.product;
+package cn.hnu.operator.service.product;
 
 /**
  * @Author: zhencym
@@ -7,10 +7,7 @@ package cn.hnu.operator.product;
 public class Apple extends Product{
 
   public Apple(int id, int consumeId, int produceId, String name) {
-    this.id = id;
-    this.consumeId = consumeId;
-    this.produceId = produceId;
-    this.name = name;
+    super(id, consumeId, produceId, name);
   }
 
   @Override
@@ -31,5 +28,19 @@ public class Apple extends Product{
   @Override
   public int getConsumeId() {
     return consumeId;
+  }
+
+  @Override
+  public void setConsumeId(int consumeId) {
+    this.consumeId = consumeId;
+  }
+  @Override
+  public String toString() {
+    return "Orange{" +
+            "id=" + id +
+            ", consumeId=" + consumeId +
+            ", produceId=" + produceId +
+            ", name='" + name + '\'' +
+            '}';
   }
 }

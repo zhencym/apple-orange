@@ -1,4 +1,4 @@
-package cn.hnu.operator.resp;
+package cn.hnu.operator.utils.result;
 
 /**
  * @Author: zhencym
@@ -9,7 +9,7 @@ public class Result {
 //  String msg;
   Object data;
 
-  public Result(int status,  Object data) {
+  public Result(int status,Object data) {
     this.status = status;
     this.data = data;
   }

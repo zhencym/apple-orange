@@ -6,10 +6,10 @@ package cn.hnu.operator;
 //应该生产者消费者在不同等待队列。但咱不知道怎么实现
 //使用的Object类里面自带的阻塞队列+sychronized锁 来实现生产者消费者模型
 
-import cn.hnu.operator.constant.MyConst;
-import cn.hnu.operator.consumer.Consumer;
-import cn.hnu.operator.producer.Productor;
-import cn.hnu.operator.product.SynContainer;
+import cn.hnu.operator.service.constant.MyConst;
+import cn.hnu.operator.service.consumer.Consumer;
+import cn.hnu.operator.service.producer.Productor;
+import cn.hnu.operator.service.constant.SynContainer;
 import java.util.concurrent.CountDownLatch;
 
 //使用同步容器，synchronized 、 休眠队列、notify、wait实现线程有序执行 的 生产者消费者问题。

@@ -1,6 +1,6 @@
-package cn.hnu.operator.product;
+package cn.hnu.operator.service.constant;
 
-import cn.hnu.operator.constant.MyConst;
+import cn.hnu.operator.service.product.Product;
 import org.springframework.stereotype.Component;
 
 /**
@@ -35,6 +35,8 @@ public class SynContainer {
 
     //如果没有满，我们就需要丢入产品
     products[count++] = product;
+    MyConst.cacheData.add(product); // 将产品放入全局缓冲区
+
     System.out.println(
         product.getName()+"生产者 " + id + " 生产的 "+ product.getName()+ " " + product.getId() + "----" + "现在仓库还剩余 " + count
             + " 个苹果或者橘子");
@@ -57,7 +59,7 @@ public class SynContainer {
 
     //判断能否消费
     if (count == 0) {
-      //等待生产者生产，消费者等待
+      //等待生产者生产，消费者wait等待
       try {
         System.out.println("仓库已空，"+productName+"消费者 " + id + " 暂停消费！");
         this.wait();
@@ -67,18 +69,25 @@ public class SynContainer {
       }
     }
 
-    // 产品不对，不能消费
+    // 产品不对,不能消费
     if (!products[count-1].getName().equals(productName)) {
       return null;
     }
 
     //如果可以消费
-    Product product = products[--count];
+    Product product = products[--count]; //那就消费最后一个
+    product.setConsumeId(id); // 设置已被消费产品的消费者ID
+    MyConst.consumedData.add(product); // 将已经被消费的产品数据加入被消费队列中
+    MyConst.cacheData.pollLast();// 并且将已经消费的产品(从后向前消费)从缓冲区弹出
+
+
     System.out.println(
         product.getName()+"消费者 " + id + " 消费了 " + product.getName() + " " + product.getId() +"----" + "现在仓库还剩余 " + count
             + " 个苹果或者橘子");
-    System.out.println("缓冲区产品情况为：");
+    System.out.println("缓冲区产品情况为:");
     System.out.println(getProductsString());
+    System.out.println("consumedData情况为："+getConsumedString());
+    System.out.println("cacheData情况为："+getCacheString());
     System.out.println();
 
     //吃完了，通知生产者生产
@@ -94,6 +103,23 @@ public class SynContainer {
     StringBuffer sb = new StringBuffer();
     for (int i = 0; i < count; i++) {
       sb.append(products[i].getName() + " " + products[i].getId() + "| ");
+    }
+    return sb.toString();
+  }
+
+  public String getCacheString(){
+    StringBuffer sb = new StringBuffer();
+    for (Product p:MyConst.cacheData
+         ) {
+      sb.append(p.toString() + "|");
+    }
+    return sb.toString();
+  }
+  public String getConsumedString(){
+    StringBuffer sb = new StringBuffer();
+    for (Product p:MyConst.consumedData
+         ) {
+      sb.append(p.toString() + "|");
     }
     return sb.toString();
   }

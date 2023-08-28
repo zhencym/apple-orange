@@ -1,10 +1,10 @@
 package cn.hnu.operator.controller;
 
-import cn.hnu.operator.constant.MyConst;
-import cn.hnu.operator.product.SynContainer;
-import cn.hnu.operator.resp.Result;
+import cn.hnu.operator.service.constant.MyConst;
+import cn.hnu.operator.service.constant.SynContainer;
+import cn.hnu.operator.service.product.Product;
+import cn.hnu.operator.utils.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,11 +18,13 @@ public class controller {
   SynContainer container;
 
   /**
-   * @return 实时返回容器状态
+   * @return 实时返回容器状态,也就是返回当前cacheData中的数据
    */
   @RequestMapping("/tick")
   public Result tick(){
-    return Result.OK();
+    // 1.将cacheData转化为对象数组
+    Product[] cacheData = MyConst.cacheData.toArray(new Product[MyConst.cacheData.size()]);
+    return new Result(20001,cacheData);
   }
 
   /**
