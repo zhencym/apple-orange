@@ -51,11 +51,14 @@ public class Productor extends Thread {
         }
         Product product = null;
         if (productName.equals(MyConst.APPLE)) {
-           product = new Apple(MyConst.PRODUCTID++, MyConst.APPLE);
+          // 生产一个苹果
+           product = new Apple(MyConst.PRODUCTID++, -1,id,MyConst.APPLE);
         } else if (productName.equals(MyConst.ORANGE)){
-          product = new Apple(MyConst.PRODUCTID++, MyConst.ORANGE);
+          // 生产一个橘子
+          product = new Apple(MyConst.PRODUCTID++, -1,id,MyConst.ORANGE);
         }
 //        System.out.println(productName+"生产者 " + id + " 准备生产"+ productName);
+
         container.push(product, id);
       }
     }

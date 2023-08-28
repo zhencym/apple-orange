@@ -38,7 +38,7 @@ public class Consumer extends Thread {
 
     // 死循环
     while (true) {
-      // 控制生产
+      // 控制生产，当正在生产时，
       while (MyConst.ISRUNNING) {
         try {
           Thread.sleep(random.nextInt(MyConst.CONSUMERSPEED * 1000) + MyConst.CONSUMERSPEED * 1000/2); //消费速度,避免同时睡去

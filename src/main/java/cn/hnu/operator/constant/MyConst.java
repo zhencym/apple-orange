@@ -1,5 +1,7 @@
 package cn.hnu.operator.constant;
 
+import java.util.Queue;
+
 /**
  * @Author: zhencym
  * @DATE: 2023/8/11
@@ -46,5 +48,10 @@ public class MyConst {
    */
   public static int CONTAINERSIZE = 20;
 
+
+  /**
+   * 实时容器数据
+   */
+  public static Queue<Object> cacheData = null;
 
 }
