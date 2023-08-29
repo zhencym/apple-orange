@@ -52,6 +52,13 @@ public class MyConst {
    */
   public static int CONTAINERSIZE = 20;
 
+  /**
+   * SynContainer中的共享容器
+   */
+  public static Product[] products = new Product[MyConst.CONTAINERSIZE];
+
+  //容器计数器
+  public static int count = 0;
 
   /**
    * 实时缓冲区(容器)数据,因为消费时，后生产的先消费，因此使用一个双端队列实现

@@ -3,18 +3,21 @@ package cn.hnu.operator.service.constant;
 import cn.hnu.operator.service.product.Product;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+
 /**
  * @Author: zhencym
  * @DATE: 2023/8/11
  */
 //缓冲区
 @Component
-public class SynContainer {
-
-  //需要一个容器大小
-  Product[] products = new Product[MyConst.CONTAINERSIZE];
-  //容器计数器
-  int count = 0;
+public class  SynContainer {
+  public synchronized void clear() {
+    MyConst.consumedData.clear();
+    MyConst.cacheData.clear();
+    MyConst.count = 0;
+    Arrays.fill(MyConst.products,null);
+  }
 
   //生产者放入产品
   public synchronized void push(Product product, int id) {
@@ -22,7 +25,7 @@ public class SynContainer {
 //    System.out.println(product.getName()+"生产者 " + id + " 准备生产");
 
     //如果容器满了，就需要调度消费者消费
-    if (count == MyConst.CONTAINERSIZE) {  // 不能是count==chickens.length
+    if (MyConst.count == MyConst.CONTAINERSIZE) {  // 不能是count==chickens.length
       //通知消费者消费，生产等待
       try {
         System.out.println("仓库已满，"+product.getName()+"生产者 " + id + " 暂停生产！");
@@ -34,11 +37,11 @@ public class SynContainer {
     }
 
     //如果没有满，我们就需要丢入产品
-    products[count++] = product;
+    MyConst.products[MyConst.count++] = product;
     MyConst.cacheData.add(product); // 将产品放入全局缓冲区
 
     System.out.println(
-        product.getName()+"生产者 " + id + " 生产的 "+ product.getName()+ " " + product.getId() + "----" + "现在仓库还剩余 " + count
+        product.getName()+"生产者 " + id + " 生产的 "+ product.getName()+ " " + product.getId() + "----" + "现在仓库还剩余 " + MyConst.count
             + " 个苹果或者橘子");
     System.out.println("缓冲区产品情况为：");
     System.out.println(getProductsString());
@@ -58,7 +61,7 @@ public class SynContainer {
   public synchronized Product pop(int id, String productName) {
 
     //判断能否消费
-    if (count == 0) {
+    if (MyConst.count == 0) {
       //等待生产者生产，消费者wait等待
       try {
         System.out.println("仓库已空，"+productName+"消费者 " + id + " 暂停消费！");
@@ -70,12 +73,12 @@ public class SynContainer {
     }
 
     // 产品不对,不能消费
-    if (!products[count-1].getName().equals(productName)) {
+    if (!MyConst.products[MyConst.count-1].getName().equals(productName)) {
       return null;
     }
 
     //如果可以消费
-    Product product = products[--count]; //那就消费最后一个
+    Product product = MyConst.products[--MyConst.count]; //那就消费最后一个
     product.setConsumeId(id); // 设置已被消费产品的消费者ID
     MyConst.cacheData.pollLast();// 将已经消费的产品(从后向前消费)从缓冲区弹出
     // 被消费历史记录，只保存最近的20条数据
@@ -86,7 +89,7 @@ public class SynContainer {
 
 
     System.out.println(
-        product.getName()+"消费者 " + id + " 消费了 " + product.getName() + " " + product.getId() +"----" + "现在仓库还剩余 " + count
+        product.getName()+"消费者 " + id + " 消费了 " + product.getName() + " " + product.getId() +"----" + "现在仓库还剩余 " + MyConst.count
             + " 个苹果或者橘子");
     System.out.println("缓冲区产品情况为:");
     System.out.println(getProductsString());
@@ -99,14 +102,11 @@ public class SynContainer {
     return product;
   }
 
-  public Product[] getProducts(){
-    return products;
-  }
 
   public String getProductsString(){
     StringBuffer sb = new StringBuffer();
-    for (int i = 0; i < count; i++) {
-      sb.append(products[i].getName() + " " + products[i].getId() + "| ");
+    for (int i = 0; i < MyConst.count; i++) {
+      sb.append(MyConst.products[i].getName() + " " + MyConst.products[i].getId() + "| ");
     }
     return sb.toString();
   }

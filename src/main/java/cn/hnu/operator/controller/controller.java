@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
+
 /**
  * @Author: zhencym
  * @DATE: 2023/8/11
@@ -52,6 +54,16 @@ public class controller {
    */
   @RequestMapping("/clearandstart")
     public Result clearAndstart(int consumerSpeed,int produceSpeed){
+    // 1.暂停并清空缓冲区、已消费区、容器
+    pause();
+    container.clear();
+    System.out.println("清空完成");
+    // 2.传入消费速度、生产速度
+    MyConst.CONSUMERSPEED = consumerSpeed;
+    MyConst.PRODUCESPEED = produceSpeed;
+    // 3. 继续开始运行
+    resume();
+    System.out.println("开始运行");
     return Result.OK();
   }
 
@@ -60,7 +72,7 @@ public class controller {
    * @return
    */
   @RequestMapping("/resume")
-  public Result start() {
+  public Result resume() {
     MyConst.ISRUNNING = true;
     return Result.OK();
   }
@@ -73,7 +85,7 @@ public class controller {
   @RequestMapping("/pause")
   public Result pause() {
     MyConst.ISRUNNING = false;
-    return new Result(20001, container.getProductsString());
+    return Result.OK();
   }
 
   /**
