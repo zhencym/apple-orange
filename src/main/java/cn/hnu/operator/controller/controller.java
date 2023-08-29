@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @Author: zhencym
  * @DATE: 2023/8/11
  */
+@RequestMapping("/")
 @RestController
 public class controller {
   @Autowired
@@ -20,11 +21,28 @@ public class controller {
   /**
    * @return 实时返回容器状态,也就是返回当前cacheData中的数据
    */
-  @RequestMapping("/tick")
+  @RequestMapping("tick")
   public Result tick(){
     // 1.将cacheData转化为对象数组
-    Product[] cacheData = MyConst.cacheData.toArray(new Product[MyConst.cacheData.size()]);
-    return new Result(20001,cacheData);
+    Object[] cacheData = MyConst.cacheData.toArray(new Object[MyConst.cacheData.size()]);
+    System.out.println("转化成功");
+    for (Object o:cacheData
+         ) {
+      System.out.println(o.toString());
+    }
+    return new Result(20001, cacheData);
+  }
+
+  /**
+   * 实时返回消费产品历史记录，限制返回最近的20条历史记录
+   * @return
+   */
+  @RequestMapping("/consumedTick")
+  public Result consumedTick(){
+    // 1.将consumedData转化为对象数组
+    Object[] consumedData = MyConst.consumedData.toArray(new Object[MyConst.cacheData.size()]);
+    System.out.println("转化成功");
+    return new Result(20001, consumedData);
   }
 
   /**

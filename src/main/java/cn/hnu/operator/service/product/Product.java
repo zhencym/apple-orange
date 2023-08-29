@@ -25,6 +25,18 @@ public abstract class Product{
       public abstract int getProduceId();
       public abstract int getConsumeId();
 
+      public void setId(int id) {
+            this.id = id;
+      }
+
+      public void setProduceId(int produceId) {
+            this.produceId = produceId;
+      }
+
+      public void setName(String name) {
+            this.name = name;
+      }
+
       // 设置产品消费者ID
       public abstract void setConsumeId(int consumeId);
 

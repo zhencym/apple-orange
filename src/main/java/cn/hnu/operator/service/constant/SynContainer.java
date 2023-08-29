@@ -77,8 +77,12 @@ public class SynContainer {
     //如果可以消费
     Product product = products[--count]; //那就消费最后一个
     product.setConsumeId(id); // 设置已被消费产品的消费者ID
-    MyConst.consumedData.add(product); // 将已经被消费的产品数据加入被消费队列中
-    MyConst.cacheData.pollLast();// 并且将已经消费的产品(从后向前消费)从缓冲区弹出
+    MyConst.cacheData.pollLast();// 将已经消费的产品(从后向前消费)从缓冲区弹出
+    // 被消费历史记录，只保存最近的20条数据
+    if(MyConst.consumedData.size() >= 20){
+      MyConst.consumedData.poll();
+    }
+    MyConst.consumedData.add(product); // 将此时被消费的产品加入历史记录中
 
 
     System.out.println(
