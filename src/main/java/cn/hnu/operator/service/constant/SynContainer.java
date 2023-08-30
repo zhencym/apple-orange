@@ -1,6 +1,7 @@
 package cn.hnu.operator.service.constant;
 
 import cn.hnu.operator.service.product.Product;
+import java.util.concurrent.locks.Condition;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -11,44 +12,56 @@ import java.util.Arrays;
  */
 //缓冲区
 @Component
-public class  SynContainer {
-  public synchronized void clear() {
-    MyConst.consumedData.clear();
-    MyConst.cacheData.clear();
-    MyConst.count = 0;
-    Arrays.fill(MyConst.products,null);
+public class SynContainer {
+
+  public void clear() {
+    // 上锁
+    MyConst.LOCK.lock();
+    try {
+      MyConst.consumedData.clear();
+      MyConst.cacheData.clear();
+      MyConst.count = 0;
+      Arrays.fill(MyConst.products,null);
+    } finally {
+      MyConst.LOCK.unlock();
+    }
   }
 
   //生产者放入产品
-  public synchronized void push(Product product, int id) {
+  public void push(Product product, int id) {
 
-//    System.out.println(product.getName()+"生产者 " + id + " 准备生产");
-
-    //如果容器满了，就需要调度消费者消费
-    if (MyConst.count == MyConst.CONTAINERSIZE) {  // 不能是count==chickens.length
-      //通知消费者消费，生产等待
-      try {
-        System.out.println("仓库已满，"+product.getName()+"生产者 " + id + " 暂停生产！");
-        this.wait();
-        return; //所以加上一个return，醒来后退出，重新获得锁才能push。
-      } catch (InterruptedException e) {
-        e.printStackTrace();
+    // 上锁
+    MyConst.LOCK.lock();
+    try {
+      //如果容器满了，就需要调度消费者消费
+      while (MyConst.count == MyConst.CONTAINERSIZE) {
+        //通知消费者消费，生产等待
+        try {
+          System.out.println("仓库已满，"+product.getName()+"生产者 " + id + " 暂停生产！");
+          MyConst.PRODUCERQUE.await();
+//        return; //所以加上一个return，醒来后退出，重新获得锁才能push。
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
       }
+
+      //如果没有满，我们就需要丢入产品
+      MyConst.products[MyConst.count++] = product;
+      MyConst.cacheData.add(product); // 将产品放入全局缓冲区
+
+      System.out.println(
+          product.getName()+"生产者 " + id + " 生产的 "+ product.getName()+ " " + product.getId() + "----" + "现在仓库还剩余 " + MyConst.count
+              + " 个苹果或者橘子");
+      System.out.println("缓冲区产品情况为：");
+      System.out.println(getProductsString());
+      System.out.println();
+
+      //可以通知消费者消费了
+      MyConst.CONSUMERQUE.signalAll();
+    } finally {
+      // 解锁
+      MyConst.LOCK.unlock();
     }
-
-    //如果没有满，我们就需要丢入产品
-    MyConst.products[MyConst.count++] = product;
-    MyConst.cacheData.add(product); // 将产品放入全局缓冲区
-
-    System.out.println(
-        product.getName()+"生产者 " + id + " 生产的 "+ product.getName()+ " " + product.getId() + "----" + "现在仓库还剩余 " + MyConst.count
-            + " 个苹果或者橘子");
-    System.out.println("缓冲区产品情况为：");
-    System.out.println(getProductsString());
-    System.out.println();
-
-    //可以通知消费者消费了
-    this.notifyAll();
 
   }
 
@@ -58,48 +71,57 @@ public class  SynContainer {
    * @param productName 消费产品名字
    * @return
    */
-  public synchronized Product pop(int id, String productName) {
+  public Product pop(int id, String productName) {
 
-    //判断能否消费
-    if (MyConst.count == 0) {
-      //等待生产者生产，消费者wait等待
-      try {
-        System.out.println("仓库已空，"+productName+"消费者 " + id + " 暂停消费！");
-        this.wait();
-        return null; //所以加上一个return，醒来后退出，重新获得锁才能pop。
-      } catch (InterruptedException e) {
-        e.printStackTrace();
+    // 上锁
+    MyConst.LOCK.lock();
+    // 一定要用try catch, 否则忘记解锁会造成死锁!
+    try {
+      //判断能否消费，while循环减少重新获取锁的代价
+      while (MyConst.count == 0) {
+        //等待生产者生产，消费者wait等待
+        try {
+          System.out.println("仓库已空，"+productName+"消费者 " + id + " 暂停消费！");
+          MyConst.CONSUMERQUE.await();
+//          return null; //所以加上一个return，醒来后退出，重新获得锁才能pop。
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
       }
+
+      // 产品不对,不能消费
+      if (!MyConst.products[MyConst.count-1].getName().equals(productName)) {
+        return null;
+      }
+
+      //如果可以消费
+      Product product = MyConst.products[--MyConst.count]; //那就消费最后一个
+      product.setConsumeId(id); // 设置已被消费产品的消费者ID
+      MyConst.cacheData.pollLast();// 将已经消费的产品(从后向前消费)从缓冲区弹出
+      // 被消费历史记录，只保存最近的20条数据
+      if(MyConst.consumedData.size() >= 20){
+        MyConst.consumedData.poll();
+      }
+      MyConst.consumedData.add(product); // 将此时被消费的产品加入历史记录中
+
+
+      System.out.println(
+          product.getName()+"消费者 " + id + " 消费了 " + product.getName() + " " + product.getId() +"----" + "现在仓库还剩余 " + MyConst.count
+              + " 个苹果或者橘子");
+      System.out.println("缓冲区产品情况为:");
+      System.out.println(getProductsString());
+      System.out.println("consumedData情况为："+getConsumedString());
+      System.out.println("cacheData情况为："+getCacheString());
+      System.out.println();
+
+      //吃完了，通知生产者生产
+      MyConst.PRODUCERQUE.signalAll();
+      return product;
+
+    } finally {
+      // 解锁
+      MyConst.LOCK.unlock();
     }
-
-    // 产品不对,不能消费
-    if (!MyConst.products[MyConst.count-1].getName().equals(productName)) {
-      return null;
-    }
-
-    //如果可以消费
-    Product product = MyConst.products[--MyConst.count]; //那就消费最后一个
-    product.setConsumeId(id); // 设置已被消费产品的消费者ID
-    MyConst.cacheData.pollLast();// 将已经消费的产品(从后向前消费)从缓冲区弹出
-    // 被消费历史记录，只保存最近的20条数据
-    if(MyConst.consumedData.size() >= 20){
-      MyConst.consumedData.poll();
-    }
-    MyConst.consumedData.add(product); // 将此时被消费的产品加入历史记录中
-
-
-    System.out.println(
-        product.getName()+"消费者 " + id + " 消费了 " + product.getName() + " " + product.getId() +"----" + "现在仓库还剩余 " + MyConst.count
-            + " 个苹果或者橘子");
-    System.out.println("缓冲区产品情况为:");
-    System.out.println(getProductsString());
-    System.out.println("consumedData情况为："+getConsumedString());
-    System.out.println("cacheData情况为："+getCacheString());
-    System.out.println();
-
-    //吃完了，通知生产者生产
-    this.notifyAll();
-    return product;
   }
 
 

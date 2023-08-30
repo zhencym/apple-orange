@@ -13,8 +13,10 @@ import java.util.concurrent.CountDownLatch;
 public class Starter {
   // app-orange ，启动！
     public void start(){
-      SynContainer container = new SynContainer(); //缓冲区
-      CountDownLatch cdl = new CountDownLatch(1); //同步20、20、20、20生产者消费者
+      //缓冲区
+      SynContainer container = new SynContainer();
+      //同步20、20、20、20生产者消费者
+      CountDownLatch cdl = new CountDownLatch(1);
       // 生产苹果
       for (int i = 1; i <= MyConst.PROCDUCENUM; i++) {
         new Productor(container, i, MyConst.APPLE, cdl).start();
