@@ -5,7 +5,7 @@ package cn.hnu.operator.service.product;
  * @DATE: 2023/8/11
  */
 
-public class Apple extends Product{
+public class Apple extends ProductType {
 
   public Apple(int id, int consumeId, int produceId, String name) {
     super(id, consumeId, produceId, name);

@@ -2,7 +2,7 @@ package cn.hnu.operator.service.producer;
 
 import cn.hnu.operator.service.constant.MyConst;
 import cn.hnu.operator.service.product.Apple;
-import cn.hnu.operator.service.product.Product;
+import cn.hnu.operator.service.product.ProductType;
 import cn.hnu.operator.service.constant.SynContainer;
 
 import java.util.Random;
@@ -51,7 +51,7 @@ public class Productor extends Thread {
         } catch (InterruptedException e) {
           throw new RuntimeException(e);
         }
-        Product product = null;
+        ProductType product = null;
         if (productName.equals(MyConst.APPLE)) {
           // 生产一个苹果
            product = new Apple(MyConst.PRODUCTID++, -1,id,MyConst.APPLE);

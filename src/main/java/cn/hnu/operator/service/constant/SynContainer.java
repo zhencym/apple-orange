@@ -1,6 +1,6 @@
 package cn.hnu.operator.service.constant;
 
-import cn.hnu.operator.service.product.Product;
+import cn.hnu.operator.service.product.ProductType;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -20,7 +20,7 @@ public class  SynContainer {
   }
 
   //生产者放入产品
-  public synchronized void push(Product product, int id) {
+  public synchronized void push(ProductType product, int id) {
 
 //    System.out.println(product.getName()+"生产者 " + id + " 准备生产");
 
@@ -58,7 +58,7 @@ public class  SynContainer {
    * @param productName 消费产品名字
    * @return
    */
-  public synchronized Product pop(int id, String productName) {
+  public synchronized ProductType pop(int id, String productName) {
 
     //判断能否消费
     if (MyConst.count == 0) {
@@ -78,7 +78,7 @@ public class  SynContainer {
     }
 
     //如果可以消费
-    Product product = MyConst.products[--MyConst.count]; //那就消费最后一个
+    ProductType product = MyConst.products[--MyConst.count]; //那就消费最后一个
     product.setConsumeId(id); // 设置已被消费产品的消费者ID
     MyConst.cacheData.pollLast();// 将已经消费的产品(从后向前消费)从缓冲区弹出
     // 被消费历史记录，只保存最近的20条数据
@@ -113,7 +113,7 @@ public class  SynContainer {
 
   public String getCacheString(){
     StringBuffer sb = new StringBuffer();
-    for (Product p:MyConst.cacheData
+    for (ProductType p:MyConst.cacheData
          ) {
       sb.append(p.toString() + "|");
     }
@@ -121,7 +121,7 @@ public class  SynContainer {
   }
   public String getConsumedString(){
     StringBuffer sb = new StringBuffer();
-    for (Product p:MyConst.consumedData
+    for (ProductType p:MyConst.consumedData
          ) {
       sb.append(p.toString() + "|");
     }

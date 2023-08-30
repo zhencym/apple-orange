@@ -2,13 +2,10 @@ package cn.hnu.operator.controller;
 
 import cn.hnu.operator.service.constant.MyConst;
 import cn.hnu.operator.service.constant.SynContainer;
-import cn.hnu.operator.service.product.Product;
 import cn.hnu.operator.utils.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Arrays;
 
 /**
  * @Author: zhencym
