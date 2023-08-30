@@ -4,7 +4,7 @@ package cn.hnu.operator.service.product;
  * @Author: zhencym
  * @DATE: 2023/8/11
  */
-public class Orange extends Product{
+public class Orange extends ProductType {
 
   public Orange(int id, int consumeId, int produceId, String name) {
     super(id, consumeId, produceId, name);

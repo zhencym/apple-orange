@@ -1,6 +1,6 @@
 package cn.hnu.operator.service.constant;
 
-import cn.hnu.operator.service.product.Product;
+import cn.hnu.operator.service.product.ProductType;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -71,7 +71,7 @@ public class MyConst {
   /**
    * SynContainer中的共享容器
    */
-  public static Product[] products = new Product[MyConst.CONTAINERSIZE];
+  public static ProductType[] products = new ProductType[MyConst.CONTAINERSIZE];
 
   //容器计数器
   public volatile static int count = 0;
@@ -79,12 +79,12 @@ public class MyConst {
   /**
    * 实时缓冲区(容器)数据,因为消费时，后生产的先消费，因此使用一个双端队列实现
    */
-  public static Deque<Product> cacheData = new ArrayDeque<>();
+  public static Deque<ProductType> cacheData = new ArrayDeque<>();
 
   /**
    * 目前已经被消费的产品数据，使用一个队列进行记录
    */
-  public static Queue<Product> consumedData = new ArrayDeque<>();
+  public static Queue<ProductType> consumedData = new ArrayDeque<>();
 
 
 
